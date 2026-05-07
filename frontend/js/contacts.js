@@ -10,6 +10,9 @@
 
 let REQUEST_CONTROL = false;
 
+let sort_field = null;
+let sort_asc = true;
+
 // Favorite Contacts functions
 function getFavorites() {
     const favorites = localStorage.getItem("favorites");
@@ -135,17 +138,29 @@ function create_table(table_body, message = "You have no registered contacts!") 
         <h2 class="text-3xl font-bold text-center my-16">${message}</h2>`
         return [];
     }
-    // Sorting with favorites displayed first
+    // Sorting with favorites displayed first, then by selected column
     table_body.sort(function(a, b) {
-        return isFavorite(b.contact_id) - isFavorite(a.contact_id);
+        const favDiff = isFavorite(b.contact_id) - isFavorite(a.contact_id);
+        if (favDiff !== 0) return favDiff;
+        if (!sort_field) return 0;
+        const valA = (a[sort_field] || "").toLowerCase();
+        const valB = (b[sort_field] || "").toLowerCase();
+        return sort_asc ? valA.localeCompare(valB) : valB.localeCompare(valA);
     });
-    
+
+    const sortable = { "Name": "full_name", "Email": "email", "Phone": "phone" };
     let result = `
         <table class="min-w-full text-sm text-left text-slate-300">
         <thead class="bg-slate-800 text-slate-200">
         <tr>`;
-    for (header of ["Name", "Email", "Phone", "Notes", "Actions"]) {
-        result += `<th class="px-3 py-2 font-semibold text-center">${header}</th>`;
+    for (const header of ["Name", "Email", "Phone", "Notes", "Actions"]) {
+        const field = sortable[header];
+        if (field) {
+            const arrow = sort_field === field ? (sort_asc ? " ▲" : " ▼") : " ⇅";
+            result += `<th class="px-3 py-2 font-semibold text-center cursor-pointer select-none hover:text-indigo-400 transition" onclick="sort_by('${field}')">${header}<span class="text-xs">${arrow}</span></th>`;
+        } else {
+            result += `<th class="px-3 py-2 font-semibold text-center">${header}</th>`;
+        }
     }
     let contact_ids = [];
     if (Array.isArray(table_body)) {
