@@ -41,6 +41,16 @@ function favoriteContacts(contact_id) {
     init_table();
 }
 
+function sort_by(field) {
+    if (sort_field === field) {
+        sort_asc = !sort_asc;
+    } else {
+        sort_field = field;
+        sort_asc = true;
+    }
+    init_table();
+}
+
 async function search_contacts(query) {
     console.log("Search function was called with query: " + query);
 
