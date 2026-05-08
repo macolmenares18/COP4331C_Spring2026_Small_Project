@@ -10,6 +10,19 @@
 
 let REQUEST_CONTROL = false;
 
+let active_tab = "all";
+
+function switch_tab(tab) {
+    active_tab = tab;
+    const allBtn = document.getElementById("tab_all");
+    const favBtn = document.getElementById("tab_favorites");
+    const active = "px-4 py-2 font-semibold border-b-2 border-indigo-500 text-indigo-400";
+    const inactive = "px-4 py-2 font-semibold text-slate-400 hover:text-white transition";
+    allBtn.className = tab === "all" ? active : inactive;
+    favBtn.className = tab === "favorites" ? active : inactive;
+    init_table();
+}
+
 let sort_field = null;
 let sort_asc = true;
 
@@ -451,7 +464,10 @@ async function init_table() {
     }
     $("#create_contact").on("click", create_contact);
     const table_body = await get_contacts();
-    const contact_ids = create_table(table_body);
+    const filtered = active_tab === "favorites"
+        ? table_body.filter(c => isFavorite(c.contact_id))
+        : table_body;
+    const contact_ids = create_table(filtered, active_tab === "favorites" ? "No favorites yet!" : "You have no registered contacts!");  
     contact_ids.forEach((element) => {
         bind_event_functions(element);
     });
