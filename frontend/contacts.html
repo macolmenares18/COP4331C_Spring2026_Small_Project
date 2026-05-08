@@ -83,6 +83,18 @@
                     oninput="search_contacts(this.value)" />
             </div>
 
+            <!-- Tabs -->
+            <div class="flex gap-2 border-b border-slate-700">
+                <button id="tab_all" onclick="switch_tab('all')"
+                    class="px-4 py-2 font-semibold border-b-2 border-indigo-500 text-indigo-400">
+                    All Contacts
+                </button>
+                <button id="tab_favorites" onclick="switch_tab('favorites')"
+                    class="px-4 py-2 font-semibold text-slate-400 hover:text-white transition">
+                    Favorites
+                </button>
+            </div>
+
             <!-- Table -->
             <div id="contact_table" class="overflow-x-auto rounded-xl border border-slate-700 bg-slate-900/60"></div>
 
